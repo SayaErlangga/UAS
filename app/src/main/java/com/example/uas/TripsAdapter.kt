@@ -2,13 +2,14 @@ package com.example.uas
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.uas.databinding.ItemWishlistBinding
 
 typealias OnClickTrips = (Trips) -> Unit
-class TripsAdapter(private val onClickTrips: OnClickTrips, private val onDelete: (Trips) -> Unit, private val
-wishlist: List<Trips>) :
-    RecyclerView.Adapter<TripsAdapter.ItemWishlistViewHolder>(){
+class TripsAdapter(private val onClickTrips: OnClickTrips, private val onDelete: (Trips) -> Unit) :
+    ListAdapter<Trips, TripsAdapter.ItemWishlistViewHolder>(WishtlistDiffCallback()) {
     inner class ItemWishlistViewHolder(private val binding: ItemWishlistBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -31,11 +32,17 @@ wishlist: List<Trips>) :
         return ItemWishlistViewHolder(binding)
     }
 
-    override fun getItemCount(): Int {
-        return wishlist.size
+    override fun onBindViewHolder(holder: ItemWishlistViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-    override fun onBindViewHolder(holder: ItemWishlistViewHolder, position: Int) {
-        holder.bind(wishlist[position])
+    private class WishtlistDiffCallback : DiffUtil.ItemCallback<Trips>() {
+        override fun areItemsTheSame(oldItem: Trips, newItem: Trips): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Trips, newItem: Trips): Boolean {
+            return oldItem == newItem
+        }
     }
 }
